@@ -1,24 +1,45 @@
 package com.jm.coderswag.Controller
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.jm.coderswag.Adapters.CategoryAdapter
+import com.jm.coderswag.Adapters.CategoryRecycleAdapter
 import com.jm.coderswag.Model.Category
 import com.jm.coderswag.R
 import com.jm.coderswag.Services.DataService
+import com.jm.coderswag.Utilities.EXTRA_CATEGORY
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var adaptor: CategoryAdapter
+    lateinit var adaptor: CategoryRecycleAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        adaptor = CategoryAdapter(this,
-            DataService.categories)
+        adaptor = CategoryRecycleAdapter(this,
+            DataService.categories) { category ->
+            val productIntent = Intent(this, ProductsActivity::class.java)
+            productIntent.putExtra(EXTRA_CATEGORY, category.title)
+            startActivity(productIntent)
+        }
         categoryListView.adapter = adaptor
+
+        val layoutManager = LinearLayoutManager(this)
+        categoryListView.layoutManager = layoutManager
+        categoryListView.setHasFixedSize(true)
+
+
+
+        // This is for list View
+        /*categoryListView.setOnItemClickListener { adapterView, view, i, l ->
+            val category = DataService.categories[i]
+            Toast.makeText(this, "You clicked on the ${category.title} cell", Toast.LENGTH_SHORT).show()
+        }*/
     }
 }
